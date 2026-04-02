@@ -27,6 +27,8 @@ Build software from a speq by treating it as the **external source of truth** th
 | "I know what that requirement means" | Call `get_requirement`. Your assumption may be wrong. |
 | "I'll verify at the end" | Verify per chunk. Gaps compound. |
 | "The plan covers this implicitly" | Every plan task must map to explicit speq IDs. No implicit coverage. |
+| "I'll create the manifest after writing the plans" | Manifest comes FIRST. It's the plan for the plans, not a summary. |
+| "WebSockets/logging/JSDoc can wait" | Tech standards are requirements too. Verify them in code, not just in the plan. |
 
 ## Process
 
@@ -130,15 +132,22 @@ or where the speq is ambiguous. Call `get_phase("tech")` to verify field lists.]
 
 **REQUIRED SUB-SKILL:** Use superpowers:writing-plans for each chunk.
 
+### Step 1: Create the Manifest FIRST
+
+**The manifest is the plan for the plans.** Create it BEFORE writing any chunk plans. Do NOT write chunk plans in parallel and then summarize them into a manifest after — that inverts the process.
+
+1. Define chunks based on requirement groups
+2. Write the manifest with chunk names, speq group mappings, requirement counts, and dependencies
+3. **Present the manifest to the user for confirmation**
+4. Only after confirmation, write the individual chunk plans
+
+**Save to:** `docs/speq/manifest.md`
+
 ### Chunking Rules
 
 Split by **requirement group** from the speq. Each chunk should contain **3-5 plan tasks** (completable in one subagent session).
 
-If a requirement group would produce more than 5 tasks, split it into sub-chunks by screen or by layer (data → API → frontend).
-
-### Manifest
-
-Create a manifest tracking all chunks. **Save to:** `docs/speq/manifest.md`
+If a requirement group would produce more than 5 tasks, split it into sub-chunks by screen or by layer (data → API → frontend). A group of 11 requirements (e.g., workspace settings with Todoist import) should be split into at least 2 chunks.
 
 ```markdown
 # Implementation Manifest
@@ -222,7 +231,7 @@ After each chunk is executed, verify against the speq.
 3. Mark each requirement as MET, PARTIALLY MET, or NOT MET
 4. Fix any PARTIALLY MET or NOT MET before updating the manifest to "done"
 
-**Common gaps to check explicitly:**
+**Common product gaps to check explicitly:**
 - Confirmation dialogs for destructive actions (delete, import)
 - Form validation for required fields
 - Empty states for lists and containers
@@ -231,11 +240,19 @@ After each chunk is executed, verify against the speq.
 - All data model fields from speq tech phase are in the schema
 - All API endpoints from speq tech phase exist
 
+**Tech standards to verify explicitly** (these are commonly skipped even when specified):
+- WebSocket/real-time sync implementation (not just the library — actual event handling)
+- Structured logging (not just console.log — a logging library with context)
+- JSDoc comments on all exported functions
+- Frontend AND backend test coverage
+- Accessibility: semantic HTML, keyboard navigation, ARIA labels, form labels, contrast
+
 **After ALL chunks are complete**, run a final full audit:
 1. `list_requirements` — walk every requirement
 2. `list_screens` — verify every screen exists in the UI
-3. `get_phase_summary("tech")` — verify tech standards (testing, accessibility, API format)
-4. Report final coverage to user
+3. `get_phase("tech")` — fetch FULL tech phase (not summary) and verify each implementation standard
+4. For each tech standard, grep the codebase to confirm it exists in code, not just in the plan
+5. Report final coverage to user with MET/PARTIAL/NOT MET for every requirement AND tech standard
 
 ---
 

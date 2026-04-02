@@ -66,7 +66,13 @@ cp skills/speq-driven-development/SKILL.md your-project/.claude/skills/speq-driv
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI
 - A speq with MCP tools configured (tools prefixed with `mcp__*speq*__`)
-- [Superpowers](https://github.com/anthropics/claude-code-plugins) plugin (for brainstorming, writing-plans, and subagent-driven-development skills)
+- [Superpowers](https://github.com/anthropics/claude-code-plugins) plugin — install with:
+
+  ```bash
+  claude plugins add anthropics/claude-code-plugins
+  ```
+
+  This provides the brainstorming, writing-plans, and subagent-driven-development skills that this skill orchestrates.
 
 ## Usage
 

@@ -13,15 +13,16 @@ Tested against the **TaskFlow E2E Test** speq — a lightweight kanban tool with
 | **Skill v3** | mcp-speq-test-5 (uncommitted) | v3 (API contract) | `10f8bb8` | Added chunk-0 API contract + manifest-first |
 | **v3 rerun** | mcp-speq-test-6 (uncommitted) | v3 (API contract) | `10f8bb8` | Second run of v3 to test reproducibility |
 | **PRD only** | prd-speq-test-1 (uncommitted) | None | n/a | Built from downloaded PRD markdown, no skill or MCP tools |
+| **v3 + tech reqs** | mcp-speq-test-7 (uncommitted) | v3 (API contract) | `10f8bb8` | Same skill, speq now has 140 reqs (37 product + 103 tech with IDs) |
 
 ## Overall Scorecard
 
-| | Original | PRD only | v1 | v2 | v1 rerun | v3 | v3 rerun |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **MET** | 31 | 33 | **50** | 45 | 41 | 48 | 47 |
-| **PARTIAL** | 6 | 6 | 1 | 5 | 6 | 4 | 3 |
-| **NOT MET** | 14 | 16 | **3** | 5 | 8 | 3 | 5 |
-| **Coverage** | 61% | 63% | **92%** | 88% | 80% | 91% | 90% |
+| | Original | PRD only | v1 | v2 | v1 rerun | v3 | v3 rerun | v3+tech |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **MET** | 31 | 33 | **50** | 45 | 41 | 48 | 47 | **49** |
+| **PARTIAL** | 6 | 6 | 1 | 5 | 6 | 4 | 3 | 4 |
+| **NOT MET** | 14 | 16 | **3** | 5 | 8 | 3 | 5 | **3** |
+| **Coverage** | 61% | 63% | **92%** | 88% | 80% | 91% | 90% | **93%** |
 
 ## Product Requirements (37 total)
 
@@ -190,22 +191,58 @@ The PRD build scored **63%** — essentially the same as the original baseline (
 
 This confirms that **the skill's value comes from the iterative speq verification loop**, not from having better documentation. The PRD contains the same information as the speq but without MCP tools for on-demand lookup and without the skill's traceability/verification process, it produces the same coverage as "just build it."
 
+### v3+tech reqs: tech requirement IDs work
+
+The speq was updated to include 103 tech requirements with IDs (e.g., `req_tech_authentication_01: "Use Clerk"`, `req_tech_standard_testing_01: "Use Vitest with ~50% coverage"`). The skill was unchanged — same v3 with API contract chunk.
+
+**Result: 93% total coverage** — tied for best overall with v1.
+
+**Tech improvements vs previous v3 runs:**
+
+| Tech Requirement | v3 | v3 rerun | v3+tech |
+|---|:---:|:---:|:---:|
+| Clerk auth | MET | NOT | **MET** |
+| Pagination | NOT | NOT | **MET** |
+| Tests | NOT | MET | **MET** (6 files!) |
+| JSDoc | MET | MET | **MET** |
+| Structured logging | MET | MET | **MET** |
+| Feature-based org | PAR | MET | **MET** |
+| README | n/a | n/a | **MET** |
+| Radix Vue | PAR | NOT | NOT (installed, unused) |
+| Zod validation | NOT | NOT | NOT |
+
+**Key insight:** Giving tech standards their own requirement IDs fixed the two biggest tech variance issues:
+- **Clerk auth**: previously substituted with custom auth in v3 rerun. Now MET — the requirement ID makes it non-negotiable.
+- **Pagination**: previously MET only in v1. Now MET — the requirement ID forced implementation.
+- **Tests**: 6 test files (frontend + backend) — most test coverage of any run.
+
+**Still NOT MET:**
+- **Radix Vue** — installed but zero imports. The model installs the package to satisfy the dependency requirement but doesn't actually use Radix components. This may need a more specific requirement (e.g., "use Radix Vue Dialog for modals").
+- **Zod** — consistently skipped. Manual validation used instead.
+- **Email invitations** — still deferred (planned but not implemented).
+
+**Product results:**
+- 34 MET, 2 PAR, 1 NOT (same persistent gaps: task status field, account deletion UI, email sending)
+- Zero API mismatches (chunk-0 contract continues to work)
+- Board reorder, empty states, confirmations all MET
+
 ### Variance analysis (updated)
 
-| Metric | Range across 5 skill runs | Original | PRD only |
+| Metric | Range across 6 skill runs | Original | PRD only |
 |--------|:---:|:---:|:---:|
 | Product MET | 25–36 (68–97%) | 22 (59%) | 22 (59%) |
-| Tech MET | 11–14 (61–78%) | 9 (64%) | 11 (61%) |
-| Total MET | 41–50 (75–92%) | 31 (61%) | 33 (63%) |
-| **Average** | **46 (85%)** | **31 (61%)** | **33 (63%)** |
+| Tech MET | 11–15 (61–83%) | 9 (64%) | 11 (61%) |
+| Total MET | 41–50 (75–93%) | 31 (61%) | 33 (63%) |
+| **Average** | **47 (86%)** | **31 (61%)** | **33 (63%)** |
 
 ### Recommendation
 
-1. **API contract chunk is proven.** Two v3 runs: zero API mismatches in both. v1-rerun had 4. Keep it.
-2. **Product coverage averaging 89%** across v3 runs. Up from 68% in v1-rerun.
-3. **PRD alone doesn't help.** Same coverage as baseline. The skill's value is the process (traceability, verification, on-demand speq fetching), not the document format.
-4. **Persistent gaps need speq-side fixes:**
-   - Email sending: add specific provider requirement
-   - Workspace permissions: add explicit membership check requirement
-   - Clerk auth / Radix Vue: if required, make them first-class requirements with IDs
-5. **Tech requirements now have IDs in the speq** (140 total: 37 product + 103 tech). Next test should show whether this eliminates tech standard variance.
+1. **API contract chunk is proven.** Three v3 runs: zero API mismatches in all. Keep it.
+2. **Tech requirement IDs work.** Adding IDs to tech standards fixed Clerk substitution, pagination, and test coverage. The skill didn't change — the speq did.
+3. **PRD alone doesn't help.** Same coverage as baseline (63%). The skill's value is the process.
+4. **Remaining gaps are speq ambiguity, not skill failure:**
+   - Task "status" — speq says "edit status" but model uses columnId. Needs clarification.
+   - Radix Vue — installed but unused. Needs more specific requirement ("use Radix Vue Dialog for all modals").
+   - Zod — consistently skipped. May need an explicit requirement for schema validation on each endpoint.
+   - Email — requires external service integration. Needs a specific provider or stub requirement.
+5. **The winning formula:** speq with requirement IDs + skill with API contract chunk + on-demand MCP lookup = 90-93% coverage consistently.

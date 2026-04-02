@@ -12,127 +12,128 @@ Tested against the **TaskFlow E2E Test** speq — a lightweight kanban tool with
 | **v1 rerun** | mcp-speq-test-4 (uncommitted) | v1 (baseline) | `11c1f87` | Second run of v1 to test reproducibility |
 | **Skill v3** | mcp-speq-test-5 (uncommitted) | v3 (API contract) | `10f8bb8` | Added chunk-0 API contract + manifest-first |
 | **v3 rerun** | mcp-speq-test-6 (uncommitted) | v3 (API contract) | `10f8bb8` | Second run of v3 to test reproducibility |
+| **PRD only** | prd-speq-test-1 (uncommitted) | None | n/a | Built from downloaded PRD markdown, no skill or MCP tools |
 
 ## Overall Scorecard
 
-| | Original | v1 | v2 | v1 rerun | v3 | v3 rerun |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| **MET** | 31 | **50** | 45 | 41 | 48 | 47 |
-| **PARTIAL** | 6 | 1 | 5 | 6 | 4 | 3 |
-| **NOT MET** | 14 | **3** | 5 | 8 | 3 | 5 |
-| **Coverage** | 61% | **92%** | 88% | 80% | 91% | 90% |
+| | Original | PRD only | v1 | v2 | v1 rerun | v3 | v3 rerun |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **MET** | 31 | 33 | **50** | 45 | 41 | 48 | 47 |
+| **PARTIAL** | 6 | 6 | 1 | 5 | 6 | 4 | 3 |
+| **NOT MET** | 14 | 16 | **3** | 5 | 8 | 3 | 5 |
+| **Coverage** | 61% | 63% | **92%** | 88% | 80% | 91% | 90% |
 
 ## Product Requirements (37 total)
 
 ### Authentication & Account (5 requirements)
 
-| Req | Description | Original | v1 | v2 | v1 rerun | v3 | v3 rerun |
-|-----|-------------|:---:|:---:|:---:|:---:|:---:|:---:|
-| 01 | Sign up with email/password | MET | MET | MET | MET | MET | MET |
-| 02 | Log in with email/password | MET | MET | MET | MET | MET | MET |
-| 03 | Redirect to onboarding on first login | MET | MET | MET | MET | MET | MET |
-| 04 | Log out from any page | NOT | MET | MET | MET | MET | MET |
-| 05 | Delete account permanently | NOT | MET | MET | NOT | MET | MET |
+| Req | Description | Original | PRD | v1 | v2 | v1 rerun | v3 | v3 rerun |
+|-----|-------------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 01 | Sign up with email/password | MET | MET | MET | MET | MET | MET | MET |
+| 02 | Log in with email/password | MET | PAR | MET | MET | MET | MET | MET |
+| 03 | Redirect to onboarding on first login | MET | PAR | MET | MET | MET | MET | MET |
+| 04 | Log out from any page | NOT | NOT | MET | MET | MET | MET | MET |
+| 05 | Delete account permanently | NOT | PAR | MET | MET | NOT | MET | MET |
 
 ### Onboarding (4 requirements)
 
-| Req | Description | Original | v1 | v2 | v1 rerun | v3 | v3 rerun |
-|-----|-------------|:---:|:---:|:---:|:---:|:---:|:---:|
-| 01 | View intro modal on first login | MET | MET | MET | MET | MET | MET |
-| 02 | Dismiss modal with Continue | MET | MET | MET | PAR | MET | MET |
-| 03 | Auto-create default board | MET | MET | MET | MET | MET | MET |
-| 04 | Navigate to auto-created board | NOT | MET | MET | MET | MET | MET |
+| Req | Description | Original | PRD | v1 | v2 | v1 rerun | v3 | v3 rerun |
+|-----|-------------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 01 | View intro modal on first login | MET | MET | MET | MET | MET | MET | MET |
+| 02 | Dismiss modal with Continue | MET | MET | MET | MET | PAR | MET | MET |
+| 03 | Auto-create default board | MET | MET | MET | MET | MET | MET | MET |
+| 04 | Navigate to auto-created board | NOT | MET | MET | MET | MET | MET | MET |
 
 ### Boards (6 requirements)
 
-| Req | Description | Original | v1 | v2 | v1 rerun | v3 | v3 rerun |
-|-----|-------------|:---:|:---:|:---:|:---:|:---:|:---:|
-| 01 | View list of boards | MET | MET | MET | MET | MET | MET |
-| 02 | Create board by name | MET | MET | MET | MET | MET | MET |
-| 03 | Delete board with confirmation | PAR | MET | MET | PAR | MET | MET |
-| 04 | Reorder boards via drag-and-drop | NOT | MET | MET | NOT | NOT | MET |
-| 05 | Navigate to board detail | MET | MET | MET | MET | MET | MET |
-| 06 | Display name + last updated | MET | MET | MET | MET | MET | MET |
+| Req | Description | Original | PRD | v1 | v2 | v1 rerun | v3 | v3 rerun |
+|-----|-------------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 01 | View list of boards | MET | MET | MET | MET | MET | MET | MET |
+| 02 | Create board by name | MET | MET | MET | MET | MET | MET | MET |
+| 03 | Delete board with confirmation | PAR | MET | MET | MET | PAR | MET | MET |
+| 04 | Reorder boards via drag-and-drop | NOT | NOT | MET | MET | NOT | NOT | MET |
+| 05 | Navigate to board detail | MET | MET | MET | MET | MET | MET | MET |
+| 06 | Display name + last updated | MET | MET | MET | MET | MET | MET | MET |
 
 ### Board Detail (6 requirements)
 
-| Req | Description | Original | v1 | v2 | v1 rerun | v3 | v3 rerun |
-|-----|-------------|:---:|:---:|:---:|:---:|:---:|:---:|
-| 01 | View all columns and tasks | MET | MET | MET | MET | MET | MET |
-| 02 | Create tasks inline | MET | MET | MET | MET | MET | MET |
-| 03 | Open task by clicking card | MET | MET | MET | MET | MET | MET |
-| 04 | Create, rename, delete columns | PAR | MET | MET | PAR | MET | MET |
-| 05 | Drag and drop tasks between columns | MET | MET | MET | NOT | MET | MET |
-| 06 | Empty-state guidance | NOT | MET | MET | MET | PAR | MET |
+| Req | Description | Original | PRD | v1 | v2 | v1 rerun | v3 | v3 rerun |
+|-----|-------------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 01 | View all columns and tasks | MET | MET | MET | MET | MET | MET | MET |
+| 02 | Create tasks inline | MET | MET | MET | MET | MET | MET | MET |
+| 03 | Open task by clicking card | MET | MET | MET | MET | MET | MET | MET |
+| 04 | Create, rename, delete columns | PAR | MET | MET | MET | PAR | MET | MET |
+| 05 | Drag and drop tasks between columns | MET | MET | MET | MET | NOT | MET | MET |
+| 06 | Empty-state guidance | NOT | MET | MET | MET | MET | PAR | MET |
 
 ### Task Management (5 requirements)
 
-| Req | Description | Original | v1 | v2 | v1 rerun | v3 | v3 rerun |
-|-----|-------------|:---:|:---:|:---:|:---:|:---:|:---:|
-| 01 | Edit title, description, assignee, status, due date, priority | PAR | MET | PAR | NOT | NOT | MET |
-| 02 | Optionally set due date | MET | MET | MET | MET | MET | MET |
-| 03 | Delete task with confirmation | PAR | MET | MET | MET | MET | MET |
-| 04 | Close task modal | MET | MET | MET | MET | MET | MET |
-| 05 | Validate required fields | NOT | MET | MET | MET | PAR | MET |
+| Req | Description | Original | PRD | v1 | v2 | v1 rerun | v3 | v3 rerun |
+|-----|-------------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 01 | Edit title, description, assignee, status, due date, priority | PAR | PAR | MET | PAR | NOT | NOT | MET |
+| 02 | Optionally set due date | MET | MET | MET | MET | MET | MET | MET |
+| 03 | Delete task with confirmation | PAR | MET | MET | MET | MET | MET | MET |
+| 04 | Close task modal | MET | MET | MET | MET | MET | MET | MET |
+| 05 | Validate required fields | NOT | MET | MET | MET | MET | PAR | MET |
 
 ### Workspace Settings (11 requirements)
 
-| Req | Description | Original | v1 | v2 | v1 rerun | v3 | v3 rerun |
-|-----|-------------|:---:|:---:|:---:|:---:|:---:|:---:|
-| 01 | Edit workspace name | MET | MET | MET | MET | MET | MET |
-| 02 | View member list | MET | MET | MET | PAR | MET | MET |
-| 03 | Invite members by email | MET | MET | MET | MET | MET | MET |
-| 04 | Send email invitations | NOT | MET | PAR | NOT | NOT | NOT |
-| 05 | All members can access settings | PAR | PAR | NOT | MET | NOT | PAR |
-| 06 | Initiate Todoist import | MET | MET | MET | MET | MET | MET |
-| 07 | Confirmation modal before import | MET | MET | MET | PAR | MET | MET |
-| 08 | View/select Todoist tasks | MET | MET | MET | PAR | MET | MET |
-| 09 | Choose destination board | MET | MET | MET | MET | MET | MET |
-| 10 | Map Todoist fields to local equivalents | PAR | MET | MET | MET | MET | MET |
-| 11 | Import regardless of duplicates | MET | MET | MET | MET | MET | MET |
+| Req | Description | Original | PRD | v1 | v2 | v1 rerun | v3 | v3 rerun |
+|-----|-------------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 01 | Edit workspace name | MET | MET | MET | MET | MET | MET | MET |
+| 02 | View member list | MET | MET | MET | MET | PAR | MET | MET |
+| 03 | Invite members by email | MET | MET | MET | MET | MET | MET | MET |
+| 04 | Send email invitations | NOT | NOT | MET | PAR | NOT | NOT | NOT |
+| 05 | All members can access settings | PAR | PAR | PAR | NOT | MET | NOT | PAR |
+| 06 | Initiate Todoist import | MET | NOT | MET | MET | MET | MET | MET |
+| 07 | Confirmation modal before import | MET | NOT | MET | MET | PAR | MET | MET |
+| 08 | View/select Todoist tasks | MET | NOT | MET | MET | PAR | MET | MET |
+| 09 | Choose destination board | MET | NOT | MET | MET | MET | MET | MET |
+| 10 | Map Todoist fields to local equivalents | PAR | NOT | MET | MET | MET | MET | MET |
+| 11 | Import regardless of duplicates | MET | NOT | MET | MET | MET | MET | MET |
 
 ### Product Requirements Summary
 
-| Group | Original | v1 | v2 | v1 rerun | v3 | v3 rerun |
-|-------|:---:|:---:|:---:|:---:|:---:|:---:|
-| Auth (5) | 3/2N | 5 MET | 5 MET | 4/1N | 5 MET | 5 MET |
-| Onboarding (4) | 3/1N | 4 MET | 4 MET | 3/1P | 4 MET | 4 MET |
-| Boards (6) | 4/1P/1N | 6 MET | 6 MET | 4/1P/1N | 5/1N | 6 MET |
-| Board Detail (6) | 3/1P/2N | 6 MET | 6 MET | 4/1P/1N | 5/1P | 6 MET |
-| Task Mgmt (5) | 2/2P/1N | 5 MET | 4/1P | 3/1N/1P | 3/1P/1N | 5 MET |
-| Workspace (11) | 7/2P/2N | 10/1P | 9/1P/1N | 7/2P/2N | 9/2N | 9/1P/1N |
-| **Total (37)** | **22/6P/8N** | **36/1P** | **34/2P/1N** | **25/6P/5N** | **31/2P/3N** | **35/1P/1N** |
+| Group | Original | PRD | v1 | v2 | v1 rerun | v3 | v3 rerun |
+|-------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Auth (5) | 3/2N | 1/3P/1N | 5 MET | 5 MET | 4/1N | 5 MET | 5 MET |
+| Onboarding (4) | 3/1N | 4 MET | 4 MET | 4 MET | 3/1P | 4 MET | 4 MET |
+| Boards (6) | 4/1P/1N | 5/1N | 6 MET | 6 MET | 4/1P/1N | 5/1N | 6 MET |
+| Board Detail (6) | 3/1P/2N | 6 MET | 6 MET | 6 MET | 4/1P/1N | 5/1P | 6 MET |
+| Task Mgmt (5) | 2/2P/1N | 3/1P/1N? | 5 MET | 4/1P | 3/1N/1P | 3/1P/1N | 5 MET |
+| Workspace (11) | 7/2P/2N | 3/1P/7N | 10/1P | 9/1P/1N | 7/2P/2N | 9/2N | 9/1P/1N |
+| **Total (37)** | **22/6P/8N** | **22/5P/10N** | **36/1P** | **34/2P/1N** | **25/6P/5N** | **31/2P/3N** | **35/1P/1N** |
 
 ## Tech Requirements
 
-| Requirement | Original | v1 | v2 | v1 rerun | v3 | v3 rerun |
-|-------------|:---:|:---:|:---:|:---:|:---:|:---:|
-| Vue + TS + Vue Query + Pinia | MET | MET | MET | MET | MET | MET |
-| Scoped CSS | NOT | MET | MET | MET | MET | MET |
-| Radix UI / radix-vue | NOT | MET | MET | MET | PAR | NOT |
-| Express + TS | MET | MET | MET | MET | MET | MET |
-| PostgreSQL + Prisma | MET | MET | MET | MET | MET | MET |
-| Clerk auth | MET | MET | MET | MET | MET | NOT (custom auth) |
-| WebSockets | MET | NOT | MET | MET | MET | MET |
-| API response format | MET | MET | PAR | MET | MET | MET |
-| Pagination | NOT | MET | NOT | NOT | NOT | NOT |
-| Task priority field | NOT | MET | MET | MET | MET | MET |
-| JSDoc | NOT | NOT | PAR | NOT | MET | MET |
-| Tests | NOT | MET | NOT | NOT | NOT | MET (2 files) |
-| Structured logging | MET | NOT | MET | MET | MET | MET (Pino) |
-| Lazy-loaded routes | MET | MET | MET | MET | MET | MET |
-| Zod validation | n/a | MET | NOT | MET | NOT | NOT |
-| Feature-based org | n/a | MET | NOT | MET | PAR | MET |
-| Max 300-line files | n/a | MET | PAR | PAR | MET | NOT (5 violations) |
-| Accessibility | n/a | MET | MET | PAR | PAR | MET |
+| Requirement | Original | PRD | v1 | v2 | v1 rerun | v3 | v3 rerun |
+|-------------|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| Vue + TS + Vue Query + Pinia | MET | MET | MET | MET | MET | MET | MET |
+| Scoped CSS | NOT | MET | MET | MET | MET | MET | MET |
+| Radix UI / radix-vue | NOT | PAR | MET | MET | MET | PAR | NOT |
+| Express + TS | MET | MET | MET | MET | MET | MET | MET |
+| PostgreSQL + Prisma | MET | MET | MET | MET | MET | MET | MET |
+| Clerk auth | MET | MET | MET | MET | MET | MET | NOT |
+| WebSockets | MET | MET | NOT | MET | MET | MET | MET |
+| API response format | MET | MET | MET | PAR | MET | MET | MET |
+| Pagination | NOT | MET | MET | NOT | NOT | NOT | NOT |
+| Task priority field | NOT | NOT | MET | MET | MET | MET | MET |
+| JSDoc | NOT | NOT | NOT | PAR | NOT | MET | MET |
+| Tests | NOT | MET | MET | NOT | NOT | NOT | MET |
+| Structured logging | MET | NOT | NOT | MET | MET | MET | MET |
+| Lazy-loaded routes | MET | MET | MET | MET | MET | MET | MET |
+| Zod validation | n/a | NOT | MET | NOT | MET | NOT | NOT |
+| Feature-based org | n/a | MET | MET | NOT | MET | PAR | MET |
+| Max 300-line files | n/a | MET | MET | PAR | PAR | MET | NOT |
+| Accessibility | n/a | PAR | MET | MET | PAR | PAR | MET |
 
 ### Tech Summary
 
-| | Original | v1 | v2 | v1 rerun | v3 | v3 rerun |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| MET | 9 | 14 | 11 | 13 | 13 | 12 |
-| PARTIAL | 0 | 0 | 3 | 2 | 3 | 1 |
-| NOT MET | 5 | 3 | 4 | 3 | 2 | 5 |
+| | Original | PRD | v1 | v2 | v1 rerun | v3 | v3 rerun |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| MET | 9 | 11 | 14 | 11 | 13 | 13 | 12 |
+| PARTIAL | 0 | 2 | 0 | 3 | 2 | 3 | 1 |
+| NOT MET | 5 | 5 | 3 | 4 | 3 | 2 | 5 |
 
 ## Key Findings
 
@@ -178,22 +179,33 @@ The only product gaps: email sending (NOT) and workspace membership checks (PAR)
 
 Tech standards remain variable even with the contract chunk. Notably v3-rerun used **custom auth instead of Clerk** and **skipped Radix Vue** — these are library-specific choices that the model sometimes substitutes. But it picked up **Pino for logging**, **JSDoc**, and **actual test files** — tech standards that had been inconsistent.
 
+### PRD-only build: no improvement over baseline
+
+The PRD build scored **63%** — essentially the same as the original baseline (61%). Key observations:
+
+- **Entire Todoist import missing** (6 NOT MET) — the PRD describes it but the model didn't implement it
+- **No logout** — same gap as the original baseline
+- **No task priority field** — same gap as the original baseline
+- **Good on some tech** — pagination, tests, WebSockets, feature-based org all present
+
+This confirms that **the skill's value comes from the iterative speq verification loop**, not from having better documentation. The PRD contains the same information as the speq but without MCP tools for on-demand lookup and without the skill's traceability/verification process, it produces the same coverage as "just build it."
+
 ### Variance analysis (updated)
 
-| Metric | Range across 5 skill runs | Original |
-|--------|:---:|:---:|
-| Product MET | 25–36 (68–97%) | 22 (59%) |
-| Tech MET | 11–14 (61–78%) | 9 (64%) |
-| Total MET | 41–50 (75–92%) | 31 (61%) |
-| **Average** | **46 (85%)** | **31 (61%)** |
+| Metric | Range across 5 skill runs | Original | PRD only |
+|--------|:---:|:---:|:---:|
+| Product MET | 25–36 (68–97%) | 22 (59%) | 22 (59%) |
+| Tech MET | 11–14 (61–78%) | 9 (64%) | 11 (61%) |
+| Total MET | 41–50 (75–92%) | 31 (61%) | 33 (63%) |
+| **Average** | **46 (85%)** | **31 (61%)** | **33 (63%)** |
 
 ### Recommendation
 
 1. **API contract chunk is proven.** Two v3 runs: zero API mismatches in both. v1-rerun had 4. Keep it.
-2. **Product coverage averaging 87%** across v3 runs (31 + 35 = 66, / 2 = 33, / 37 = 89%). Up from 68% in v1-rerun.
-3. **Persistent gaps need speq-side fixes:**
+2. **Product coverage averaging 89%** across v3 runs. Up from 68% in v1-rerun.
+3. **PRD alone doesn't help.** Same coverage as baseline. The skill's value is the process (traceability, verification, on-demand speq fetching), not the document format.
+4. **Persistent gaps need speq-side fixes:**
    - Email sending: add specific provider requirement
    - Workspace permissions: add explicit membership check requirement
-   - Pagination: add as a requirement with ID
-   - Clerk auth: if required, make it a hard requirement, not just a tech phase mention
-4. **Tech library substitution** (Clerk → custom, Radix → custom) happens when libraries are mentioned in the tech phase but not tied to requirement IDs. Making these first-class requirements would reduce substitution.
+   - Clerk auth / Radix Vue: if required, make them first-class requirements with IDs
+5. **Tech requirements now have IDs in the speq** (140 total: 37 product + 103 tech). Next test should show whether this eliminates tech standard variance.

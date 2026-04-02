@@ -27,6 +27,8 @@ Build software from a speq by treating it as the **external source of truth** th
 | "I know what that requirement means" | Call `get_requirement`. Your assumption may be wrong. |
 | "I'll verify at the end" | Verify per chunk. Gaps compound. |
 | "The plan covers this implicitly" | Every plan task must map to explicit speq IDs. No implicit coverage. |
+| "I'll create the manifest after the plans" | Manifest comes FIRST. It's the plan for the plans, not a summary. |
+| "The frontend and backend will just match up" | They won't. Define the API contract before implementing either side. |
 
 ## Process
 
@@ -130,15 +132,33 @@ or where the speq is ambiguous. Call `get_phase("tech")` to verify field lists.]
 
 **REQUIRED SUB-SKILL:** Use superpowers:writing-plans for each chunk.
 
+### Step 1: Create the Manifest FIRST
+
+**The manifest is the plan for the plans.** Create it BEFORE writing any chunk plans.
+
+1. Define chunks based on requirement groups
+2. Write the manifest with chunk names, speq group mappings, requirement counts, and dependencies
+3. **Present the manifest to the user for confirmation**
+4. Only after confirmation, write the individual chunk plans
+
+**Save to:** `docs/speq/manifest.md`
+
+### Step 2: API Contract Chunk (Chunk 0)
+
+**The first chunk must define the API contract** — shared types, endpoint signatures, request/response shapes — before any frontend or backend implementation begins. When separate subagents implement client and server chunks independently, they will diverge on endpoint paths, request bodies, and response shapes unless they share a common contract.
+
+Chunk 0 should:
+- Define all API endpoint paths, methods, request bodies, and response shapes based on the speq's `apiEndpoints` (call `get_phase("tech")` to get these)
+- Create shared type definitions that both client and server import
+- Include the API response format from the speq (e.g., `{ success, data, meta }`)
+
+All subsequent chunks implement against this contract, not their own interpretation of the speq.
+
 ### Chunking Rules
 
 Split by **requirement group** from the speq. Each chunk should contain **3-5 plan tasks** (completable in one subagent session).
 
 If a requirement group would produce more than 5 tasks, split it into sub-chunks by screen or by layer (data → API → frontend).
-
-### Manifest
-
-Create a manifest tracking all chunks. **Save to:** `docs/speq/manifest.md`
 
 ```markdown
 # Implementation Manifest
@@ -149,7 +169,8 @@ Create a manifest tracking all chunks. **Save to:** `docs/speq/manifest.md`
 
 | # | Plan File | Speq Groups | Reqs | Status | Depends On |
 |---|-----------|-------------|------|--------|------------|
-| 1 | chunk-auth.md | group_authentication | 5 | pending | — |
+| 0 | chunk-api-contract.md | (tech phase) | — | pending | — |
+| 1 | chunk-auth.md | group_authentication | 5 | pending | 0 |
 | 2 | chunk-onboarding.md | group_onboarding | 4 | pending | 1 |
 | ... | | | | | |
 ```

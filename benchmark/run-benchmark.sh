@@ -5,7 +5,7 @@ set -euo pipefail
 RUNS_PER_APPROACH=${RUNS:-10}
 MAX_TURNS=${MAX_TURNS:-200}
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-BASE_DIR="/Users/dwood/Documents/github"
+BASE_DIR="/Users/dwood/Documents/github/speq-benchmarks"
 RESULTS_FILE="${SCRIPT_DIR}/results.csv"
 MCP_CONFIG="${SCRIPT_DIR}/mcp.json"
 PRD_SOURCE="${BASE_DIR}/prd-speq-test-1/taskflow-e2e-test-prd.md"

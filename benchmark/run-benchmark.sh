@@ -264,55 +264,48 @@ if [ $# -gt 0 ]; then
   echo "Running specific approaches: ${APPROACHES[*]}"
 fi
 
-# Concurrency: run N approaches in parallel, runs within each approach are sequential
-CONCURRENCY=${CONCURRENCY:-${#APPROACHES[@]}}  # default: all approaches in parallel
-echo "Concurrency: ${CONCURRENCY} approaches in parallel"
+# Concurrency: max parallel builds
+CONCURRENCY=${CONCURRENCY:-8}
+echo "Concurrency: ${CONCURRENCY} parallel builds"
 echo ""
 
-run_approach() {
-  local approach=$1
-  local logfile="${SCRIPT_DIR}/logs/${approach}.log"
-  mkdir -p "${SCRIPT_DIR}/logs"
-
-  echo "[${approach}] Starting ${RUNS_PER_APPROACH} runs at $(date '+%H:%M:%S')" | tee "$logfile"
-
-  for run in $(seq 1 "$RUNS_PER_APPROACH"); do
-    run_build "$approach" "$run" 2>&1 | tee -a "$logfile"
-  done
-
-  echo "[${approach}] All ${RUNS_PER_APPROACH} runs complete at $(date '+%H:%M:%S')" | tee -a "$logfile"
-}
-
 # Export functions and variables for subshells
-export -f run_build run_audit setup_dir get_prompt run_approach
+export -f run_build run_audit setup_dir get_prompt
 export RUNS_PER_APPROACH MAX_TURNS SCRIPT_DIR BASE_DIR RESULTS_FILE MCP_CONFIG PRD_SOURCE SKILL_DIR
+
+mkdir -p "${SCRIPT_DIR}/logs"
 
 # Main execution
 total_start=$(date +%s)
 
-if [ ${#APPROACHES[@]} -eq 1 ]; then
-  # Single approach: run directly
-  run_approach "${APPROACHES[0]}"
-else
-  # Multiple approaches: run in parallel
-  pids=()
-  for approach in "${APPROACHES[@]}"; do
-    run_approach "$approach" &
-    pids+=($!)
-    echo "Launched ${approach} (PID ${pids[-1]})"
+pids=()
+for approach in "${APPROACHES[@]}"; do
+  for run in $(seq 1 "$RUNS_PER_APPROACH"); do
+    logfile="${SCRIPT_DIR}/logs/${approach}-${run}.log"
 
-    # Throttle if we've hit concurrency limit
+    run_build "$approach" "$run" > "$logfile" 2>&1 &
+    pids+=($!)
+    echo "Launched ${approach} run ${run} (PID ${pids[-1]})"
+
+    # Throttle at concurrency limit
     while [ $(jobs -r | wc -l) -ge "$CONCURRENCY" ]; do
       sleep 10
     done
   done
+done
 
-  # Wait for all
-  echo ""
-  echo "Waiting for ${#pids[@]} approach workers..."
-  for pid in "${pids[@]}"; do
-    wait "$pid" || echo "WARNING: PID $pid exited with error"
-  done
+echo ""
+echo "All ${#pids[@]} builds launched. Waiting for completion..."
+echo "Tail logs: tail -f ${SCRIPT_DIR}/logs/*.log"
+echo ""
+
+failed=0
+for pid in "${pids[@]}"; do
+  wait "$pid" || failed=$((failed + 1))
+done
+
+if [ $failed -gt 0 ]; then
+  echo "WARNING: ${failed} builds exited with errors"
 fi
 
 total_end=$(date +%s)

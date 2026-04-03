@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "speq-taskflow-e2e-test": {
+      "type": "http",
+      "url": "https://mcp.stg.getspeq.com/mcp/2d7b02369c5ee4f8a8ce488bf0ae47c25fdd165d7f089debf8d905a00ddefc5d4c93aead980667e3708ac0a923fe5d6f70de24dcb9518e7a6bfd2b5208c0dab2"
+    }
+  }
+}

@@ -14,15 +14,17 @@ Tested against the **TaskFlow E2E Test** speq — a lightweight kanban tool with
 | **v3 rerun** | mcp-speq-test-6 (uncommitted) | v3 (API contract) | `10f8bb8` | Second run of v3 to test reproducibility |
 | **PRD only** | prd-speq-test-1 (uncommitted) | None | n/a | Built from downloaded PRD markdown, no skill or MCP tools |
 | **v3 + tech reqs** | mcp-speq-test-7 (uncommitted) | v3 (API contract) | `10f8bb8` | Same skill, speq now has 140 reqs (37 product + 103 tech with IDs) |
+| **PRD via MCP** | mcp-speq-test-8 (uncommitted) | None (brainstorming only) | n/a | Used `get_prd` MCP tool to fetch PRD, then brainstorming skill |
+| **v3 no-pause** | mcp-speq-test-9 (uncommitted) | v3 (API contract) | `10f8bb8` | Speq skill, told "do not pause for input", no chunk-0 produced |
 
 ## Overall Scorecard
 
-| | Original | PRD only | v1 | v2 | v1 rerun | v3 | v3 rerun | v3+tech |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **MET** | 31 | 33 | **50** | 45 | 41 | 48 | 47 | **49** |
-| **PARTIAL** | 6 | 6 | 1 | 5 | 6 | 4 | 3 | 4 |
-| **NOT MET** | 14 | 16 | **3** | 5 | 8 | 3 | 5 | **3** |
-| **Coverage** | 61% | 63% | **92%** | 88% | 80% | 91% | 90% | **93%** |
+| | Original | PRD local | PRD MCP | v1 | v2 | v1 rerun | v3 | v3 rerun | v3+tech | v3 no-pause |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **MET** | 31 | 33 | 25 | **50** | 45 | 41 | 48 | 47 | **49** | 42 |
+| **PARTIAL** | 6 | 6 | 6 | 1 | 5 | 6 | 4 | 3 | 4 | 6 |
+| **NOT MET** | 14 | 16 | 24 | **3** | 5 | 8 | 3 | 5 | **3** | 7 |
+| **Coverage** | 61% | 63% | 49% | **92%** | 88% | 80% | 91% | 90% | **93%** | 82% |
 
 ## Product Requirements (37 total)
 
@@ -226,23 +228,45 @@ The speq was updated to include 103 tech requirements with IDs (e.g., `req_tech_
 - Zero API mismatches (chunk-0 contract continues to work)
 - Board reorder, empty states, confirmations all MET
 
+### PRD via MCP (`get_prd`): worst result yet
+
+test-8 used the brainstorming skill with a PRD fetched via the `get_prd` MCP tool. It scored **49% — the worst of any build**, significantly below even the original baseline (61%).
+
+Key failures:
+- Auth signup/login UI not wired despite Clerk being integrated
+- Onboarding modal never triggers (first-login detection not implemented)
+- No drag-and-drop anywhere (vuedraggable installed but unused)
+- No task priority field, no task status field
+- No account deletion, no structured logging, no JSDoc, no Zod
+
+This suggests that front-loading the entire PRD into context may actually **hurt** by overwhelming the model with information instead of letting it fetch what it needs on demand. The PRD is ~5000+ tokens of dense text; the skill's approach of fetching requirement details per-chunk keeps each context focused.
+
+### Speq skill without pausing (test-9): 82%
+
+test-9 used the speq skill with "do not pause for my input or approval." It scored 82% — lower than v3+tech (93%) but still well above baselines.
+
+Notable: **it didn't produce a chunk-0 API contract**, instead chunking by layer (all backend first, then all frontend). This led to API mismatches returning (task drag endpoint, board reorder not wired). The "do not pause" instruction may have caused it to skip the manifest approval step, which is where chunk-0 would have been confirmed.
+
+Also used SQLite instead of PostgreSQL — without pausing for confirmation, it made its own infrastructure choices.
+
 ### Variance analysis (updated)
 
-| Metric | Range across 6 skill runs | Original | PRD only |
+| Metric | Speq skill runs (7) | PRD approaches (2) | Original baseline |
 |--------|:---:|:---:|:---:|
-| Product MET | 25–36 (68–97%) | 22 (59%) | 22 (59%) |
-| Tech MET | 11–15 (61–83%) | 9 (64%) | 11 (61%) |
-| Total MET | 41–50 (75–93%) | 31 (61%) | 33 (63%) |
-| **Average** | **47 (86%)** | **31 (61%)** | **33 (63%)** |
+| Product MET | 25–36 (68–97%) | 14–22 (38–59%) | 22 (59%) |
+| Tech MET | 11–15 (61–83%) | 11 (61%) | 9 (64%) |
+| Total MET | 41–50 (75–93%) | 25–33 (49–63%) | 31 (61%) |
+| **Average** | **47 (86%)** | **29 (56%)** | **31 (61%)** |
 
 ### Recommendation
 
-1. **API contract chunk is proven.** Three v3 runs: zero API mismatches in all. Keep it.
-2. **Tech requirement IDs work.** Adding IDs to tech standards fixed Clerk substitution, pagination, and test coverage. The skill didn't change — the speq did.
-3. **PRD alone doesn't help.** Same coverage as baseline (63%). The skill's value is the process.
-4. **Remaining gaps are speq ambiguity, not skill failure:**
+1. **API contract chunk is essential.** Runs with chunk-0: zero API mismatches. Runs without: mismatches return. Keep it.
+2. **Tech requirement IDs work.** v3+tech scored 93% with best tech coverage. The skill didn't change — the speq did.
+3. **PRD approach is strictly worse.** Both PRD builds (local: 63%, MCP: 49%) underperform every speq skill run. Front-loading all context hurts; on-demand fetching by ID helps.
+4. **Don't skip the pause.** "Do not pause for approval" dropped from 93% to 82% by letting the model skip chunk-0 and make its own infrastructure choices. The manifest approval step is load-bearing.
+5. **Remaining gaps are speq ambiguity, not skill failure:**
    - Task "status" — speq says "edit status" but model uses columnId. Needs clarification.
    - Radix Vue — installed but unused. Needs more specific requirement ("use Radix Vue Dialog for all modals").
    - Zod — consistently skipped. May need an explicit requirement for schema validation on each endpoint.
    - Email — requires external service integration. Needs a specific provider or stub requirement.
-5. **The winning formula:** speq with requirement IDs + skill with API contract chunk + on-demand MCP lookup = 90-93% coverage consistently.
+6. **The winning formula:** speq with requirement IDs + skill with API contract chunk + on-demand MCP lookup + user approval at manifest step = **90-93% coverage consistently**.
